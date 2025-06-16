@@ -4,6 +4,7 @@ import {
   registerValidation,
   loginValidation,
 } from "../middleware/validators/user.validator.js";
+import { loginLimiter } from "../middleware/rateLimiter.js";
 
 const router = Router();
 router.post(
@@ -11,6 +12,11 @@ router.post(
   registerValidation,
   userController.createUserController
 );
-router.post("/login", loginValidation, userController.loginController);
+router.post(
+  "/login",
+  loginLimiter,
+  loginValidation,
+  userController.loginController
+);
 
 export default router;
