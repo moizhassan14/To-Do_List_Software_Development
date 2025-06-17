@@ -124,3 +124,27 @@ export const refreshTokenController = async (req, res) => {
     res.status(403).json({ error: "Invalid or expired refresh token" });
   }
 };
+
+export const assignRoleController = async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+
+  const validRoles = ["owner", "collaborator"];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ error: "Invalid role" });
+  }
+
+  try {
+    const user = await userModel.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    return res.status(200).json({ message: `Role updated to ${role}` });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+};

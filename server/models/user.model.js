@@ -23,6 +23,11 @@ const userSchema = new Schema({
     minlength: [6, "Password must be at least 6 characters"],
     select: false, // Do not return password by default in queries
   },
+  role: {
+    type: String,
+    enum: ['owner', 'collaborator'],
+    default: 'collaborator',
+  },
 });
 
 userSchema.statics.hashPassword = async function (password) {
