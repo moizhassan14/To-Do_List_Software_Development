@@ -148,3 +148,19 @@ export const assignRoleController = async (req, res) => {
     return res.status(500).json({ error: "Server error" });
   }
 };
+
+export const getUsersByRoleController = async (req, res) => {
+  try {
+    const users = await userModel.find({}, "email role createdAt").sort({ role: 1 });
+
+    const groupedUsers = {
+      owners: users.filter(user => user.role === "owner"),
+      collaborators: users.filter(user => user.role === "collaborator"),
+    };
+
+    res.status(200).json(groupedUsers);
+  } catch (err) {
+    console.error("Error fetching users by role:", err);
+    res.status(500).json({ error: "Server error while fetching users" });
+  }
+};

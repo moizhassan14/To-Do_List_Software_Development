@@ -32,7 +32,7 @@ router.get("/owner-dashboard", authUser, authorizeRole("owner"), (req, res) => {
 // Shared dashboard (owner or collaborator)
 router.get(
   "/shared-dashboard",
-  authUser,
+  authUser, // checks if user is logged in
   authorizeRole("owner", "collaborator"),
   (req, res) => {
     res
@@ -43,10 +43,16 @@ router.get(
 // Only owner can assign roles to other users
 router.put(
   "/:id/role",
-  authUser,
-  authorizeRole("owner"),
+  authUser, // checks if user is logged in
+  authorizeRole("owner"), // allows only 'owner'
   userController.assignRoleController
 );
-
+// only owner retrieve the users
+router.get(
+  "/roles",
+  authUser, // checks if user is logged in
+  authorizeRole("owner"), // allows only 'owner'
+  userController.getUsersByRoleController
+);
 
 export default router;
