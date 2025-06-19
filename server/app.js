@@ -7,6 +7,7 @@ import userRouter from "./routes/user.route.js";
 import { apiRateLimiter } from "./middleware/rateLimiter.js";
 import cookieParser from "cookie-parser";
 import taskRouter from "./routes/task.route.js";
+import cors from "cors";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +16,10 @@ connectDB();
 const app = express();
 
 app.use(morgan("dev"));
+app.use(cors({
+    origin: process.env.CLIENT_URL, // Your frontend URL
+    credentials: true
+  }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
