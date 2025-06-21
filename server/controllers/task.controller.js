@@ -116,3 +116,38 @@ export const shareTaskController = async (req, res) => {
     res.status(500).json({ error: "Failed to share task" });
   }
 };
+
+export const reorderTasksController = async (req, res) => {
+  try {
+    const updates = req.body.tasks; // Array of {_id, order}
+
+    // Validate input
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({ error: "No tasks provided for reordering" });
+    }
+
+    for (const item of updates) {
+      if (!item._id || typeof item.order !== "number") {
+        return res.status(400).json({ error: "Invalid task data provided" });
+      }
+    }
+
+    const bulkOps = updates.map(({ _id, order }) => ({
+      updateOne: {
+        filter: { _id, owner: req.user.id },
+        update: { $set: { order } },
+      },
+    }));
+
+    await Task.bulkWrite(bulkOps);
+
+    const reorderedTasks = await Task.find({
+      $or: [{ owner: req.user.id }, { sharedWith: req.user.id }],
+    }).sort({ order: 1, createdAt: -1 });
+
+    res.status(200).json({ tasks: reorderedTasks });
+  } catch (err) {
+    console.error("[Reorder Tasks Error]", err);
+    res.status(500).json({ error: "Failed to reorder tasks" });
+  }
+};

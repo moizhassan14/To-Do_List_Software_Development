@@ -18,7 +18,7 @@ const Dashboard = () => {
     collaborators,
     roleMessage,
     buttonLoading,
-  } = useSelector((state) => state.userReducer);
+  } = useSelector((state) => state.user);
 
   // 🔐 Role-based dashboard message fetch
   useEffect(() => {
@@ -42,9 +42,9 @@ const Dashboard = () => {
     }
   }, [userProfile, dispatch, owners.length, collaborators.length]);
 
-  if (!userProfile) {
-    return <div>Loading user data...</div>;
-  }
+  // if (!userProfile) {
+  //   return <div>Loading user data...</div>;
+  // }
 
   const handleLogout = () => {
     dispatch(logOutUserThunk());
@@ -57,7 +57,7 @@ const Dashboard = () => {
   return (
     <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Welcome, {userProfile.email}</h1>
+        <h1 className="text-2xl font-bold">Welcome, {userProfile?.email}</h1>
         <button
           onClick={handleLogout}
           disabled={buttonLoading}
@@ -81,7 +81,7 @@ const Dashboard = () => {
             owners.map((user) => (
               <li key={user._id} className="flex justify-between items-center mb-1">
                 {user.email}
-                {userProfile.role === "owner" && user._id !== userProfile._id && (
+                {userProfile?.role === "owner" && user._id !== userProfile?._id && (
                   <select
                     value="owner"
                     onChange={(e) => handleRoleChange(user._id, e.target.value)}
@@ -107,7 +107,7 @@ const Dashboard = () => {
             collaborators.map((user) => (
               <li key={user._id} className="flex justify-between items-center mb-1">
                 {user.email}
-                {userProfile.role === "owner" && (
+                {userProfile?.role === "owner" && (
                   <select
                     value="collaborator"
                     onChange={(e) => handleRoleChange(user._id, e.target.value)}

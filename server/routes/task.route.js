@@ -13,5 +13,7 @@ router.get("/get-my-tasks", authUser, taskController.getMyTasksController);
 router.put("/update/:id", authUser, createOrUpdateTaskValidation, taskController.updateTaskController);
 router.delete("/delete/:id", authUser, taskController.deleteTaskController);
 router.post("/share/:taskId", authUser, taskController.shareTaskController);
+router.put("/reorder", authUser, taskController.reorderTasksController);
+
 
 export default router;

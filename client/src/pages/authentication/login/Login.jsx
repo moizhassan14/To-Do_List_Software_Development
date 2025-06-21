@@ -79,9 +79,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   const { isAuthenticated, buttonLoading } = useSelector(
-    (state) => state.userReducer
+    (state) => state.user
   );
-  const isDark = useSelector((state) => state.themeReducer.mode === "dark");
+  const isDark = useSelector((state) => state.theme.mode === "dark");
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });

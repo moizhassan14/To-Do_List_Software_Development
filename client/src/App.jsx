@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 function App() {
-  const themeMode = useSelector((state) => state.themeReducer.mode); // 'light' or 'dark'
+  const themeMode = useSelector((state) => state.theme.mode); // 'light' or 'dark'
 
   // Theme-based styles
   const isDark = themeMode === "dark";
