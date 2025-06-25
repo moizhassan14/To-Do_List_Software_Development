@@ -15,7 +15,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@headlessui/react": "^2.2.4",
     "@hello-pangea/dnd": "^18.0.1",
-    "@heroicons/react": "^1.0.6",
+    "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.8.2",
     "@shadcn/ui": "^0.0.4",
     "@tailwindcss/vite": "^4.1.10",

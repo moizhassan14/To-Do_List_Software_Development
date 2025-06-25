@@ -3,8 +3,7 @@ import { body } from "express-validator";
 
 export const createOrUpdateTaskValidation = [
   body("title")
-    .notEmpty()
-    .withMessage("Title is required")
+    .optional()
     .isLength({ min: 3, max: 100 })
     .withMessage("Title must be 3–100 characters"),
 

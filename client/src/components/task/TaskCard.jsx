@@ -1,16 +1,21 @@
-// TaskCard.js
+// 📁 components/TaskCard.jsx
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteTaskThunk, updateTaskThunk } from "../../store/slice/task/task.thunk";
-
-const TaskCard = ({ task }) => {
+import {
+  deleteTaskThunk,
+  updateTaskThunk,
+} from "../../store/slice/task/task.thunk";
+const TaskCard = React.memo(({ task }) => {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(task.title);
 
   const handleCompleteToggle = () => {
     dispatch(
-      updateTaskThunk({ id: task._id, data: { isCompleted: !task.isCompleted } })
+      updateTaskThunk({
+        id: task._id,
+        data: { isCompleted: !task.isCompleted },
+      })
     );
   };
 
@@ -46,10 +51,19 @@ const TaskCard = ({ task }) => {
         <div className="flex gap-2">
           <button
             onClick={handleCompleteToggle}
-            className="text-sm px-3 py-1 rounded bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className={`text-sm px-3 py-1 rounded ${
+              task.isCompleted
+                ? "bg-yellow-100 hover:bg-yellow-200"
+                : "bg-green-100 hover:bg-green-200"
+            } focus:outline-none focus:ring-2 ${
+              task.isCompleted
+                ? "focus:ring-yellow-500"
+                : "focus:ring-green-500"
+            } focus:ring-offset-2`}
           >
             {task.isCompleted ? "Undo" : "Complete"}
           </button>
+
           <button
             onClick={handleEdit}
             className="text-sm px-3 py-1 rounded bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
@@ -83,6 +97,6 @@ const TaskCard = ({ task }) => {
       </div>
     </div>
   );
-};
+});
 
 export default TaskCard;

@@ -8,7 +8,8 @@ import {
 } from "../../store/slice/task/task.slice";
 import { RiSearch2Line } from "react-icons/ri";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/solid"; // ✅ corrected path
+import { CheckIcon } from "@heroicons/react/20/solid";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid"; // ✅ corrected path
 
 const TaskFilterBar = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ const TaskFilterBar = () => {
       <div className="relative w-full sm:w-64">
         <Listbox value={selectedTags} onChange={() => {}} multiple>
           <div className="relative mt-1">
-            <Listbox.Button className="w-full cursor-pointer rounded-md bg-gray-100 dark:bg-gray-700 py-2 pl-4 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <Listbox.Button className="w-full cursor-pointer rounded-md bg-gray-100 dark:bg-gray-700 py-2 pl-4 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-800 dark:text-gray-100">
               <span className="block truncate">
                 {selectedTags.length > 0
                   ? selectedTags.join(", ")
@@ -72,13 +73,14 @@ const TaskFilterBar = () => {
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
               </span>
             </Listbox.Button>
+
             <Transition
               as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm">
                 {allTags.map((tag) => (
                   <Listbox.Option
                     key={tag}
@@ -88,16 +90,18 @@ const TaskFilterBar = () => {
                   >
                     {({ active }) => (
                       <li
-                        className={`${
-                          active
-                            ? "bg-indigo-500 text-white"
-                            : "text-gray-900 dark:text-white"
-                        } cursor-pointer select-none relative py-2 pl-10 pr-4`}
+                        className={`flex items-center justify-between px-4 py-2 cursor-pointer transition-colors rounded-md
+            ${
+              active
+                ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-600 dark:text-white"
+                : "text-gray-800 dark:text-gray-200"
+            }`}
+                        style={{ listStyle: "none" }} // Removes dot
                       >
-                        <span className="block truncate">{tag}</span>
+                        <span className="truncate">{tag}</span>
                         {selectedTags.includes(tag) && (
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
-                            <CheckIcon className="h-5 w-5" />
+                          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 dark:bg-indigo-400 text-white dark:text-gray-900">
+                            <CheckIcon className="w-4 h-4" />
                           </span>
                         )}
                       </li>

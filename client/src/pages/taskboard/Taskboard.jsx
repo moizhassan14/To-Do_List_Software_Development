@@ -99,7 +99,7 @@ const TaskBoard = () => {
     <section
       className={`p-6 md:p-8 min-h-screen transition duration-300 ease-in-out ${
         themeMode === "dark"
-          ? "bg-gray-950 text-white"
+          ? "bg-gray-900 text-white"
           : "bg-gray-50 text-gray-800"
       }`}
     >
@@ -123,23 +123,40 @@ const TaskBoard = () => {
               ref={provided.innerRef}
               {...provided.droppableProps}
               className="mt-6 space-y-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             >
               {filteredTasks.map((task, index) => (
                 <Draggable key={task._id} draggableId={task._id} index={index}>
-                  {(provided) => (
-                    <motion.div
+                  {(provided, snapshot) => (
+                    <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.2 }}
+                      style={{
+                        ...provided.draggableProps.style,
+                        transform: provided.draggableProps.style?.transform,
+                        transition: snapshot.isDragging
+                          ? "none"
+                          : "transform 0.2s ease",
+                        backgroundColor: snapshot.isDragging
+                          ? isDark
+                            ? "#1f2937"
+                            : "#e0e7ff"
+                          : isDark
+                          ? "#111827"
+                          : "#ffffff",
+                        boxShadow: snapshot.isDragging
+                          ? "0 6px 12px rgba(0, 0, 0, 0.2)"
+                          : "none",
+                        borderRadius: "0.75rem",
+                        padding: "4px",
+                        userSelect: "none",
+                      }}
                     >
                       <TaskCard task={task} />
-                    </motion.div>
+                    </div>
                   )}
                 </Draggable>
               ))}
