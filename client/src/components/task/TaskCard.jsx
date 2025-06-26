@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Dialog } from "@headlessui/react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   deleteTaskThunk,
   updateTaskThunk,
@@ -8,7 +9,28 @@ import {
 const TaskCard = React.memo(({ task }) => {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(task.title);
+  const [editedTask, setEditedTask] = useState({ ...task });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { userProfile } = useSelector((state) => state.user);
+  const [isOwner, setIsOwner] = useState(false);
+  useEffect(() => {
+    setEditedTask((prev) => ({
+      ...prev,
+      tagsInput: task.tags?.join(", ") || "",
+    }));
+  }, [isEditing]);
+
+  useEffect(() => {
+    if (userProfile?._id && task.owner) {
+      setIsOwner(userProfile._id === task.owner);
+    }
+  }, [userProfile, task.owner]);
+
+  if (!userProfile) return null;
+
+  
+
+  console.log("userProfile", userProfile, "task.owner", task.owner);
 
   const handleCompleteToggle = () => {
     dispatch(
@@ -24,8 +46,16 @@ const TaskCard = React.memo(({ task }) => {
   };
 
   const handleEdit = () => {
-    if (isEditing) {
-      dispatch(updateTaskThunk({ id: task._id, data: { title: editedTitle } }));
+    if (isEditing && isOwner) {
+      dispatch(
+        updateTaskThunk({
+          id: task._id,
+          data: {
+            ...editedTask,
+            dueDate: new Date(editedTask.dueDate).toISOString(),
+          },
+        })
+      );
     }
     setIsEditing(!isEditing);
   };
@@ -43,16 +73,70 @@ const TaskCard = React.memo(({ task }) => {
       `}
     >
       <div className="flex justify-between items-start">
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            className="border border-gray-300 dark:border-gray-600 rounded p-2 w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          />
+        {isEditing && userProfile?._id === task.owner ? (
+          <div className="space-y-2 w-full">
+            <input
+              name="title"
+              value={editedTask.title}
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, title: e.target.value })
+              }
+              className="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"
+            />
+
+            <textarea
+              name="description"
+              value={editedTask.description}
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, description: e.target.value })
+              }
+              className="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"
+            />
+
+            <input
+              type="date"
+              name="dueDate"
+              value={editedTask.dueDate?.slice(0, 10)} // ISO format for input
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, dueDate: e.target.value })
+              }
+              className="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"
+            />
+
+            <select
+              name="priority"
+              value={editedTask.priority}
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, priority: e.target.value })
+              }
+              className="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+
+            <input
+              name="tags"
+              value={editedTask.tagsInput || ""}
+              onChange={(e) => {
+                setEditedTask((prev) => ({
+                  ...prev,
+                  tagsInput: e.target.value, // this is just a temp input field
+                  tags: e.target.value
+                    .split(",")
+                    .map((tag) => tag.trim())
+                    .filter(Boolean),
+                }));
+              }}
+              placeholder="Tags (comma separated)"
+              className="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"
+            />
+          </div>
         ) : (
           <h3 className="text-lg font-semibold">{task.title}</h3>
         )}
+
         <div className="flex gap-2 ml-2">
           <button
             onClick={handleCompleteToggle}
@@ -84,7 +168,7 @@ const TaskCard = React.memo(({ task }) => {
         </div>
       </div>
 
-      {task.description && (
+      {!isEditing && task.description && (
         <p className="text-sm text-gray-600 dark:text-gray-300">
           {task.description}
         </p>
@@ -101,11 +185,18 @@ const TaskCard = React.memo(({ task }) => {
               <div key={attachment._id} className="flex items-center gap-1">
                 {attachment.fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                   <img
-                    src={`${
-                      import.meta.env.VITE_API_BASE_URL
-                    }/${attachment.filePath.replace(/\\/g, "/")}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${
+                      attachment.filePath
+                    }`}
                     alt={attachment.fileName}
-                    className="h-12 w-12 object-cover rounded"
+                    className="h-12 w-12 object-cover rounded cursor-pointer"
+                    onClick={() =>
+                      setSelectedImage(
+                        `${import.meta.env.VITE_API_BASE_URL}/${
+                          attachment.filePath
+                        }`
+                      )
+                    }
                   />
                 ) : (
                   <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded">
@@ -114,6 +205,25 @@ const TaskCard = React.memo(({ task }) => {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal for full-size image preview */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="relative max-w-3xl max-h-[90vh]">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 text-white text-xl bg-black bg-opacity-40 rounded-full px-3 py-1"
+            >
+              ✕
+            </button>
+            <img
+              src={selectedImage}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
           </div>
         </div>
       )}
