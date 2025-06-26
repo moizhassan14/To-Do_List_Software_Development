@@ -11,29 +11,44 @@ import {
 import { toggleTheme } from "../../store/slice/theme/theme.slice";
 import toast from "react-hot-toast";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const ToggleSwitch = ({ isOn, handleToggle }) => (
-  <motion.button
-    type="button"
-    onClick={handleToggle}
-    className={`flex items-center justify-center w-10 h-10 rounded-full 
-      ${isOn ? "bg-indigo-600" : "bg-gray-300 dark:bg-gray-600"} 
-      focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-    whileTap={{ scale: 0.9 }}
-    aria-label="Toggle Theme"
-  >
-    {isOn ? (
-      <FaMoon className="text-white" />
-    ) : (
-      <FaSun className="text-yellow-500" />
-    )}
-  </motion.button>
-);
+const ToggleSwitch = ({ isOn, handleToggle, label }) => {
+  return (
+    <motion.button
+      type="button"
+      role="switch"
+      aria-checked={isOn}
+      onClick={handleToggle}
+      className={`flex items-center justify-between w-16 h-8 p-1 rounded-full
+        ${isOn ? "bg-indigo-600" : "bg-gray-300 dark:bg-gray-600"}
+        focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+        shadow-md relative cursor-pointer transition-colors duration-300 ease-in-out`}
+      whileTap={{ scale: 0.9 }}
+      aria-label={label || "Toggle theme"}
+    >
+      <motion.div
+        layout
+        className="bg-white w-6 h-6 rounded-full shadow-md flex items-center justify-center text-indigo-600 dark:text-indigo-600"
+        initial={false}
+        animate={{ x: isOn ? 32 : 0 }}
+        transition={{ type: "spring", stiffness: 700, damping: 30 }}
+      >
+        {isOn ? (
+          <FaMoon size={16} aria-hidden="true" />
+        ) : (
+          <FaSun size={16} aria-hidden="true" />
+        )}
+      </motion.div>
+    </motion.button>
+  );
+};
 
 const ITEMS_PER_PAGE = 5;
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     userProfile,
@@ -46,6 +61,7 @@ const Dashboard = () => {
   } = useSelector((state) => state.user);
 
   const isDark = useSelector((state) => state.theme.mode === "dark");
+  const user = useSelector((state) => state.user.userProfile);
 
   const [activeTab, setActiveTab] = useState("owners");
   const [ownersPage, setOwnersPage] = useState(1);
@@ -77,6 +93,10 @@ const Dashboard = () => {
     hasFetchedDashboardRef.current = false;
     hasFetchedUsersRef.current = false;
     dispatch(logOutUserThunk());
+  };
+
+  const handleGoToTaskBoard = () => {
+    navigate("/tasks");
   };
 
   const handleRoleChange = async (userId, newRole) => {
@@ -177,21 +197,32 @@ const Dashboard = () => {
     >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          {
-            roleMessage &&(
-
-          <h1 className="text-2xl font-bold">
-            Welcome, <span className="text-indigo-600 dark:text-indigo-400">{roleMessage}</span>
-          </h1>
-            )
-          }
+          {roleMessage && (
+            <h1 className="text-2xl font-bold">
+              Welcome,{" "}
+              <span className="text-indigo-600 dark:text-indigo-400">
+                {roleMessage}
+              </span>
+            </h1>
+          )}
           {/* {roleMessage && (
             <p className="mt-2 text-2xl font-bold text-indigo-600 dark:text-indigo-400">{roleMessage}</p>
           )} */}
         </div>
 
         <div className="flex gap-4 items-center">
-          <ToggleSwitch isOn={isDark} handleToggle={() => dispatch(toggleTheme())} />
+          <ToggleSwitch
+            isOn={isDark}
+            handleToggle={() => dispatch(toggleTheme())}
+          />
+          {user?.role === "owner" && (
+            <button
+              onClick={handleGoToTaskBoard}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              TaskBoard
+            </button>
+          )}
           <button
             onClick={handleLogout}
             disabled={buttonLoading}
@@ -233,7 +264,12 @@ const Dashboard = () => {
 
           {activeTab === "owners"
             ? renderUserList(owners, "owner", ownersPage, setOwnersPage)
-            : renderUserList(collaborators, "collaborator", collaboratorsPage, setCollaboratorsPage)}
+            : renderUserList(
+                collaborators,
+                "collaborator",
+                collaboratorsPage,
+                setCollaboratorsPage
+              )}
         </div>
       )}
     </motion.div>
