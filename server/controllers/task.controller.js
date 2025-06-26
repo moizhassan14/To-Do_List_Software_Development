@@ -12,7 +12,7 @@ export const createTaskController = async (req, res) => {
       owner: req.user.id,
       attachments: req.files?.map((file) => ({
         fileName: file.originalname,
-        filePath: file.path,
+        filePath: `uploads/${file.filename}`,
       })),
     };
 

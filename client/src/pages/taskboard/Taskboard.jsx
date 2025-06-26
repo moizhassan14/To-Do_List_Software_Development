@@ -1,5 +1,7 @@
 // TaskBoard.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import CreateTaskModal from "../../components/task/CreateTaskModal";
+import FloatingButton from "../../components/common/FloatingButton";
 import { useDispatch, useSelector } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { motion } from "framer-motion";
@@ -45,6 +47,7 @@ const ToggleSwitch = ({ isOn, handleToggle, label }) => {
 };
 
 const TaskBoard = () => {
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const {
     tasks = [],
@@ -165,6 +168,8 @@ const TaskBoard = () => {
           )}
         </Droppable>
       </DragDropContext>
+      <CreateTaskModal isOpen={showModal} onClose={() => setShowModal(false)} />
+      <FloatingButton onClick={() => setShowModal(true)} />
     </section>
   );
 };

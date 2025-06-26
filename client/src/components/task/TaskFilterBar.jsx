@@ -1,4 +1,3 @@
-// TaskFilterBar.jsx
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,8 +7,7 @@ import {
 } from "../../store/slice/task/task.slice";
 import { RiSearch2Line } from "react-icons/ri";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/20/solid";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid"; // ✅ corrected path
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 const TaskFilterBar = () => {
   const dispatch = useDispatch();
@@ -30,14 +28,13 @@ const TaskFilterBar = () => {
     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
       {/* Filter Buttons */}
       <div className="flex gap-2">
-        {["all", "active", "completed"].map((type) => (
+        {['all', 'active', 'completed'].map((type) => (
           <button
             key={type}
-            className={`px-3 py-1 rounded-full text-sm transition ${
-              filter === type
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 dark:bg-gray-600 dark:text-white"
-            }`}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 focus:outline-none
+              ${filter === type
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}
             onClick={() => dispatch(setFilter(type))}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -54,7 +51,7 @@ const TaskFilterBar = () => {
           type="text"
           value={search}
           onChange={(e) => dispatch(setSearch(e.target.value))}
-          className="pl-10 pr-4 py-2 w-full sm:w-64 rounded-full bg-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="pl-10 pr-4 py-2 w-full sm:w-64 rounded-full bg-gray-100 text-gray-800 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           placeholder="Search tasks..."
         />
       </div>
@@ -63,7 +60,7 @@ const TaskFilterBar = () => {
       <div className="relative w-full sm:w-64">
         <Listbox value={selectedTags} onChange={() => {}} multiple>
           <div className="relative mt-1">
-            <Listbox.Button className="w-full cursor-pointer rounded-md bg-gray-100 dark:bg-gray-700 py-2 pl-4 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-800 dark:text-gray-100">
+            <Listbox.Button className="w-full cursor-pointer rounded-md bg-gray-100 dark:bg-gray-800 py-2 pl-4 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-800 dark:text-gray-100">
               <span className="block truncate">
                 {selectedTags.length > 0
                   ? selectedTags.join(", ")
@@ -80,7 +77,7 @@ const TaskFilterBar = () => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm">
                 {allTags.map((tag) => (
                   <Listbox.Option
                     key={tag}
@@ -91,12 +88,10 @@ const TaskFilterBar = () => {
                     {({ active }) => (
                       <li
                         className={`flex items-center justify-between px-4 py-2 cursor-pointer transition-colors rounded-md
-            ${
-              active
-                ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-600 dark:text-white"
-                : "text-gray-800 dark:text-gray-200"
-            }`}
-                        style={{ listStyle: "none" }} // Removes dot
+                          ${active
+                            ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-600 dark:text-white'
+                            : 'text-gray-800 dark:text-gray-200'}`}
+                        style={{ listStyle: 'none' }}
                       >
                         <span className="truncate">{tag}</span>
                         {selectedTags.includes(tag) && (

@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 .toggle-button {
     position: absolute;
     top: 15px;
@@ -15,30 +13,56 @@
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.toggle-button:hover {
+  }
+  
+  .toggle-button:hover {
     background-color: #0056b3;
-}
-
-
-.search-bar {
+  }
+  
+  /* 🌙 Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    .toggle-button {
+      background-color: #4f46e5; /* Indigo-600 */
+      color: white;
+    }
+  
+    .toggle-button:hover {
+      background-color: #4338ca; /* Indigo-700 */
+    }
+  }
+  
+  .search-bar {
     display: flex;
     align-items: center;
-}
-
-.search-bar input {
+  }
+  
+  .search-bar input {
     width: 100%;
     padding: 10px;
     border: 2px solid #ccc;
     border-radius: 20px;
     margin-left: 10px;
-}
-
-.search-bar input::placeholder {
+    background-color: white;
+    color: #333;
+  }
+  
+  .search-bar input::placeholder {
     color: #aaa;
-}
-
+  }
+  
+  /* 🌙 Dark Theme Styles for Input */
+  @media (prefers-color-scheme: dark) {
+    .search-bar input {
+      background-color: #1f2937; /* gray-800 */
+      border-color: #374151;     /* gray-700 */
+      color: #f9fafb;            /* gray-50 */
+    }
+  
+    .search-bar input::placeholder {
+      color: #9ca3af;            /* gray-400 */
+    }
+  }
+  
 
 
 
