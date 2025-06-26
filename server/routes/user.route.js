@@ -27,7 +27,7 @@ router.post("/refresh-token", userController.refreshTokenController);
 
 // Owner-only dashboard route
 router.get("/owner-dashboard", authUser, authorizeRole("owner"), (req, res) => {
-  res.status(200).json({ message: `Welcome Owner: ${req.user.email}` });
+  res.status(200).json({ message: `${req.user.role}: ${req.user.email}` });
 });
 // Shared dashboard (owner or collaborator)
 router.get(

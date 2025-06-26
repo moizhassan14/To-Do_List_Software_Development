@@ -79,9 +79,9 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const { isAuthenticated, buttonLoading } = useSelector(
-    (state) => state.userReducer
+    (state) => state.user
   );
-  const isDark = useSelector((state) => state.themeReducer.mode === "dark");
+  const isDark = useSelector((state) => state.theme.mode === "dark");
 
   const [signupData, setSignupData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
@@ -91,7 +91,7 @@ const Signup = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/");
+    if (isAuthenticated) navigate("/tasks");
   }, [isAuthenticated, navigate]);
 
   const handleToggleTheme = () => {
@@ -150,7 +150,7 @@ const Signup = () => {
         response.payload.success
       ) {
         toast.success("Login successful!"); // Show toast here
-        navigate("/");
+        navigate("/tasks");
       } else {
         toast.error(response?.payload?.message || "Registration failed");
       }

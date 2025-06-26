@@ -91,7 +91,7 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/");
+    if (isAuthenticated) navigate("/tasks");
   }, [isAuthenticated, navigate]);
 
   const handleToggleTheme = () => {
@@ -150,7 +150,7 @@ const Login = () => {
         response.payload.success
       ) {
         toast.success("Login successful!"); // Show toast here
-        navigate("/");
+        navigate("/tasks");
       } else {
         toast.error(response?.payload?.message || "Login failed");
       }

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../../components/utilities/axiosInstance";
 import toast from "react-hot-toast";
+import { resetUserState } from "./user.slice";
 
 // loginThunk
 export const loginUserThunk = createAsyncThunk(
@@ -40,9 +41,13 @@ export const registerUserThunk = createAsyncThunk(
 // Logout Thunk
 export const logOutUserThunk = createAsyncThunk(
   "user/logout",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       await axiosInstance.post("/users/logout");
+
+      // ✅ Reset user state to prevent further fetches/toasts
+      dispatch(resetUserState());
+
       toast.success("Logged out successfully");
       return true;
     } catch (error) {
