@@ -165,6 +165,13 @@ const TaskCard = React.memo(({ task }) => {
           >
             Delete
           </button>
+          {task.sharedWith?.length > 0 && (
+            <span className="text-purple-500 dark:text-purple-300">
+              Shared with {task.sharedWith.length} user
+              {task.sharedWith.length > 1 ? "s" : ""}
+            </span>
+          )}
+
         </div>
       </div>
 
